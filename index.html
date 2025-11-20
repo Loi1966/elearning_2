@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Phỏng Lập Trình Bất Đồng Bộ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Mô Phỏng Lập Trình Bất Đồng Bộ</h1>
+            <p class="subtitle">Khám phá các kỹ thuật bất đồng bộ để tối ưu hóa hiệu suất ứng dụng</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('callbacks')">Callbacks</button>
+            <button class="tab-btn" onclick="switchTab('promises')">Promises</button>
+            <button class="tab-btn" onclick="switchTab('async-await')">Async/Await</button>
+            <button class="tab-btn" onclick="switchTab('parallel')">Promise.all()</button>
+            <button class="tab-btn" onclick="switchTab('race')">Promise.race()</button>
+            <button class="tab-btn" onclick="switchTab('queue')">Task Queue</button>
+        </div>
+
+        <!-- Callbacks Demo -->
+        <div id="callbacks" class="tab-content active">
+            <div class="demo-card">
+                <h2>📞 Callbacks - Cách Cũ</h2>
+                <p>Callbacks là hàm được truyền vào hàm khác để thực thi sau khi tác vụ hoàn thành. Phương pháp này dễ dẫn đến "Callback Hell".</p>
+                
+                <div class="code-block">
+function fetchData(callback) {
+  setTimeout(() => {
+    callback("Dữ liệu nhận được!");
+  }, 1000);
+}
+
+fetchData((data) => {
+  console.log(data);
+});
+                </div>
+
+                <div class="controls">
+                    <button onclick="runCallbackDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('callbackOutput')">Xóa</button>
+                </div>
+
+                <div class="output" id="callbackOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="callbackTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tác vụ</div>
+                        <div class="metric-value" id="callbackTasks">0</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>⚠️ Nhược điểm:</strong> Callback Hell, khó đọc, khó bảo trì, xử lý lỗi phức tạp
+                </div>
+            </div>
+        </div>
+
+        <!-- Promises Demo -->
+        <div id="promises" class="tab-content">
+            <div class="demo-card">
+                <h2>🤝 Promises - Cải Tiến</h2>
+                <p>Promises cung cấp cách tốt hơn để xử lý bất đồng bộ với .then(), .catch(), và .finally().</p>
+                
+                <div class="code-block">
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("Thành công!");
+  }, 1000);
+});
+
+promise
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+                </div>
+
+                <div class="controls">
+                    <button onclick="runPromiseDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('promiseOutput')">Xóa</button>
+                </div>
+
+                <div class="output" id="promiseOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="promiseTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tác vụ</div>
+                        <div class="metric-value" id="promiseTasks">0</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>✅ Ưu điểm:</strong> Dễ chain, xử lý lỗi tốt hơn, code sạch hơn
+                </div>
+            </div>
+        </div>
+
+        <!-- Async/Await Demo -->
+        <div id="async-await" class="tab-content">
+            <div class="demo-card">
+                <h2>🚀 Async/Await - Hiện Đại Nhất</h2>
+                <p>Async/Await cho phép viết code bất đồng bộ giống như code đồng bộ, dễ đọc và dễ hiểu hơn.</p>
+                
+                <div class="code-block">
+async function fetchData() {
+  try {
+    const data = await new Promise(resolve => {
+      setTimeout(() => resolve("Dữ liệu!"), 1000);
+    });
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+await fetchData();
+                </div>
+
+                <div class="controls">
+                    <button onclick="runAsyncAwaitDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('asyncAwaitOutput')">Xóa</button>
+                </div>
+
+                <div class="output" id="asyncAwaitOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="asyncAwaitTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tác vụ</div>
+                        <div class="metric-value" id="asyncAwaitTasks">0</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>✅ Ưu điểm:</strong> Code sạch, dễ đọc, xử lý lỗi với try/catch, khuyến nghị dùng
+                </div>
+            </div>
+        </div>
+
+        <!-- Parallel Demo -->
+        <div id="parallel" class="tab-content">
+            <div class="demo-card">
+                <h2>⚡ Promise.all() - Thực Thi Song Song</h2>
+                <p>Promise.all() chạy nhiều tác vụ cùng lúc, nhanh hơn chạy tuần tự. Nếu 1 tác vụ lỗi, tất cả lỗi.</p>
+                
+                <div class="code-block">
+const promises = [
+  new Promise(r => setTimeout(() => r("Task 1"), 1000)),
+  new Promise(r => setTimeout(() => r("Task 2"), 1500)),
+  new Promise(r => setTimeout(() => r("Task 3"), 800))
+];
+
+const results = await Promise.all(promises);
+console.log(results);
+                </div>
+
+                <div class="controls">
+                    <button onclick="runParallelDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('parallelOutput')">Xóa</button>
+                </div>
+
+                <div class="task-list" id="parallelTasks"></div>
+
+                <div class="output" id="parallelOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="parallelTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tác vụ</div>
+                        <div class="metric-value" id="parallelTasks">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tăng Tốc</div>
+                        <div class="metric-value" id="parallelSpeedup">0%</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Lợi ích:</strong> Nhanh hơn 2-3x so với chạy tuần tự, tận dụng tối đa tài nguyên
+                </div>
+            </div>
+        </div>
+
+        <!-- Race Demo -->
+        <div id="race" class="tab-content">
+            <div class="demo-card">
+                <h2>🏁 Promise.race() - Chạy Đua</h2>
+                <p>Promise.race() trả về kết quả của tác vụ hoàn thành đầu tiên. Hữu ích cho timeout và fallback.</p>
+                
+                <div class="code-block">
+const promises = [
+  new Promise(r => setTimeout(() => r("Nhanh"), 500)),
+  new Promise(r => setTimeout(() => r("Chậm"), 2000))
+];
+
+const result = await Promise.race(promises);
+console.log(result); // "Nhanh"
+                </div>
+
+                <div class="controls">
+                    <button onclick="runRaceDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('raceOutput')">Xóa</button>
+                </div>
+
+                <div class="task-list" id="raceTasks"></div>
+
+                <div class="output" id="raceOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="raceTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Người Thắng</div>
+                        <div class="metric-value" id="raceWinner">-</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Ứng dụng:</strong> Timeout, fallback, lấy kết quả nhanh nhất từ nhiều nguồn
+                </div>
+            </div>
+        </div>
+
+        <!-- Queue Demo -->
+        <div id="queue" class="tab-content">
+            <div class="demo-card">
+                <h2>📋 Task Queue - Quản Lý Hàng Đợi</h2>
+                <p>Task Queue kiểm soát số lượng tác vụ chạy cùng lúc, hữu ích khi có giới hạn tài nguyên.</p>
+                
+                <div class="code-block">
+class TaskQueue {
+  constructor(concurrency = 2) {
+    this.concurrency = concurrency;
+    this.running = 0;
+    this.queue = [];
+  }
+
+  async add(task) {
+    while (this.running >= this.concurrency) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+    this.running++;
+    await task();
+    this.running--;
+  }
+}
+                </div>
+
+                <div class="controls">
+                    <label>
+                        Độ Đồng Thời:
+                        <input type="number" id="concurrency" min="1" max="5" value="2" style="width: 50px; padding: 5px; margin: 0 10px;">
+                    </label>
+                    <button onclick="runQueueDemo()">Chạy Demo</button>
+                    <button onclick="clearOutput('queueOutput')">Xóa</button>
+                </div>
+
+                <div class="task-list" id="queueTasks"></div>
+
+                <div class="output" id="queueOutput"></div>
+
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Thời gian</div>
+                        <div class="metric-value" id="queueTime">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Tác vụ</div>
+                        <div class="metric-value" id="queueTasks">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Đang Chạy</div>
+                        <div class="metric-value" id="queueRunning">0</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Ứng dụng:</strong> Giới hạn kết nối API, tải file, xử lý dữ liệu lớn
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
